@@ -37,7 +37,7 @@ Rpd.noderenderer('pd/wave', 'html', {
         return {
             'wave': {
                 default: function() { chooser.value = 'sin'; return 'sin'; },
-                valueOut: Kefir.fromEvent(chooser, 'change')
+                valueOut: Kefir.fromEvents(chooser, 'change')
                                .map(function() {
                                     return chooser.options[chooser.selectedIndex].value;
                                })
@@ -75,6 +75,7 @@ function createOption(value, selected) {
 
 function extractPos(evt) { return { x: evt.clientX,
                                     y: evt.clientY }; };
+
 function attachSpinner(target, initial) {
     target.classList.add('rpd-pd-spinner');
     var initial = initial || 0;
@@ -85,13 +86,13 @@ function attachSpinner(target, initial) {
         target.innerText = target.textContent = val;
     });
     change.emit(initial);
-    Kefir.fromEvent(target, 'mousedown')
+    Kefir.fromEvents(target, 'mousedown')
          .map(extractPos)
          .flatMap(function(startPos) {
              var start = state.value;
-             return Kefir.fromEvent(document.body, 'mousemove')
+             return Kefir.fromEvents(document.body, 'mousemove')
                          .map(extractPos)
-                         .takeUntilBy(Kefir.fromEvent(document.body, 'mouseup'))
+                         .takeUntilBy(Kefir.fromEvents(document.body, 'mouseup'))
                          .onValue(function(value) {
                              change.emit(start + (value.x - startPos.x));
                          })
